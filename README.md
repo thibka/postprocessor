@@ -35,6 +35,5 @@ PostProcessor.add('godrays', {
     }
 });
 
-PostProcessor.add('pixelation'
-);
+PostProcessor.add('pixelation');
 ```
