@@ -8,7 +8,7 @@ Makes Three.js post processing easy.
 
 # Usage
 
-'''javascript
+```javascript
 function render() {
     requestAnimationFrame(render);
     PostProcessor.composer.render();
@@ -37,4 +37,4 @@ PostProcessor.add('godrays', {
 
 PostProcessor.add('pixelation'
 );
-'''
+```
