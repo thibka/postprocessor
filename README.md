@@ -43,7 +43,7 @@ PostProcessor.add('godrays', {
     lightSource: sun,
     options: {
         screenMode: true,
-        samples: godRaysSamples,
+        samples: 60,
     }
 });
 PostProcessor.remove('godrays');
