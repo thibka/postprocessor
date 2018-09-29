@@ -36,7 +36,7 @@ Then, the PostProcessor can be used this way
 // If no pass is added, the PostProcessor will simply render the scene with no effect.
 PostProcessor.init(renderer, scene, camera);
 
-// Then, any pass can be dynamiccaly added or removed
+// Then, any pass can be dynamically added or removed
 PostProcessor.add('godrays', {
     scene: scene,
     camera: camera,
