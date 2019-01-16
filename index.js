@@ -1,32 +1,25 @@
-import { 
-    EffectComposer, 
-    GlitchPass, 
-    RenderPass, 
-    FilmPass, 
-    BloomPass, 
-    GodRaysPass,
-    BlurPass,
-    BokehPass,
-    ToneMappingPass,
-    PixelationPass,
-    ShockWavePass,
-    SMAAPass
-} from 'postprocessing';
-
-// PostProcessor
+import { WebGLRenderer } from 'three';
+import { BlurPass, BloomEffect, BokehEffect, PixelationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
+ 
 var PP = {
     renderedPasses: {},
     renderedPassesOrder: []
 };
 
-PP.init = (renderer, scene, camera) => {
-    PP.composer = new EffectComposer(renderer);
+PP.init = (scene, camera) => {
+    PP.renderer = new WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    PP.renderer.setSize(window.innerWidth, window.innerHeight);
+    PP.renderer.setPixelRatio(window.devicePixelRatio);
+    PP.composer = new EffectComposer(PP.renderer);
+
     var pass = new RenderPass(scene, camera);
     pass.renderToScreen = true;
     pass.antialias = false;
     PP.renderedPasses.render = pass;
     PP.renderedPassesOrder.push('render');
     PP.composer.addPass(pass);
+
+    PP.camera = camera;
 }
 
 PP.add = (passName, params) => {
@@ -52,43 +45,55 @@ PP.remove = (passName) => {
 }
 
 PP._passes = {
-    glitch: (noiseMapSize) => {
-        return new GlitchPass({
-            dtSize: noiseMapSize
-        });
-    },
-    
-    pixelation: (granularity) => {
-        return new PixelationPass(granularity);
-    },
-    
-    film: () => {
-        return new FilmPass({
-            noiseIntensity: 1, // 0 - 1
-            scanlineDensity: 1, // 0 - 2, the lower the bigger the lines
-            gridLineWidth: 1, // min 0
-            gridScale: .01 // min 0.000001
-        });
-    },
-    
     bloom: (options) => {
         var options = options == undefined ? {} : options;
-        return new BloomPass({
+        return new EffectPass(
+            PP.camera, 
+            new BloomEffect({
             resolutionScale: options.resolutionScale || .1, // 0 - 1
             kernelSize: options.kernelSize || 2, // 0 - 5, the lower the bigger the lines
             intensity: options.intensity || 3, // min 0
             distinction: options.distinction || 1, // min 0.000001, The luminance distinction factor. Raise this value to bring out the brighter elements in the scene.
             screenMode: options.screenMode || true
-        });
+        }));
     },
-    
+
     blur: () => {
         return new BlurPass({
             resolutionScale: .5, // 0 - 1
             kernelSize: 2 // 0 - 5 
         });
     },
+
+    bokeh: (options) => {
+        return new EffectPass(PP.camera, new BokehEffect({
+            focus: (options != undefined && options.focus != undefined) ? options.focus : .5, // 0 - 1, 0 = close focus, 1 = far focus
+            dof: (options != undefined && options.dof != undefined) ? options.dof : 0, // 0 - 1, 0 = out of focus is blurry, 1 = everything is sharp
+            aperture: (options != undefined && options.aperture != undefined) ? options.aperture : .05, // 0 - 0.05, amplifie la dof (depth of field)
+            maxBlur: (options != undefined && options.maxBlur != undefined) ? options.maxBlur :   .1
+        }));
+    },
     
+    pixelation: (granularity) => {
+        return new EffectPass(PP.camera, new PixelationEffect(granularity));
+    },
+    
+    /*
+    glitch: (noiseMapSize) => {
+        return new GlitchPass({
+            dtSize: noiseMapSize
+        });
+    },
+    
+    film: () => {
+        return new EffectPass(PP.camera, new FilmEffect({
+            noiseIntensity: 1, // 0 - 1
+            scanlineDensity: 1, // 0 - 2, the lower the bigger the lines
+            gridLineWidth: 1, // min 0
+            gridScale: .01 // min 0.000001
+        });
+    }, 
+
     godrays: (params) => { // scene, camera, lightSource, options
         return new GodRaysPass(
             params.scene, 
@@ -96,15 +101,6 @@ PP._passes = {
             params.lightSource,
             params.options
         );
-    },
-    
-    bokeh: (params) => {
-        return new BokehPass(params.camera, {
-            focus: params.focus || .5, // 0 - 1, 0 = close focus, 1 = far focus
-            dof: params.dof || 0, // 0 - 1, 0 = out of focus is blurry, 1 = everything is sharp
-            aperture: params.aperture || .05, // 0 - 0.05, amplifie la dof (depth of field)
-            maxBlur: params.maxBlur ||  .1
-        });
     },
 
     tonemapping: (params) => {
@@ -127,6 +123,8 @@ PP._passes = {
             params.imgArea
         );
     }
+    
+    */    
 }
 
 export default PP;
