@@ -1,6 +1,6 @@
 import { WebGLRenderer } from 'three';
-import { BlurPass, BloomEffect, BokehEffect, PixelationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
- 
+import { BlurPass, BloomEffect, BokehEffect, PixelationEffect, EffectComposer, EffectPass, RenderPass, SMAAEffect } from "postprocessing";
+
 var PP = {
     renderedPasses: {},
     renderedPassesOrder: []
@@ -35,12 +35,12 @@ PP.add = (passName, params) => {
 
 PP.remove = (passName) => {
     PP.composer.removePass(PP.renderedPasses[passName]);
-    
+
     delete PP.renderedPasses[passName];
     var index = PP.renderedPassesOrder.indexOf(passName);
-    PP.renderedPassesOrder.splice(index,1);
+    PP.renderedPassesOrder.splice(index, 1);
 
-    var lastPass = PP.renderedPassesOrder[PP.renderedPassesOrder.length-1];
+    var lastPass = PP.renderedPassesOrder[PP.renderedPassesOrder.length - 1];
     PP.renderedPasses[lastPass].renderToScreen = true;
 }
 
@@ -48,14 +48,14 @@ PP._passes = {
     bloom: (options) => {
         var options = options == undefined ? {} : options;
         return new EffectPass(
-            PP.camera, 
+            PP.camera,
             new BloomEffect({
-            resolutionScale: options.resolutionScale || .1, // 0 - 1
-            kernelSize: options.kernelSize || 2, // 0 - 5, the lower the bigger the lines
-            intensity: options.intensity || 3, // min 0
-            distinction: options.distinction || 1, // min 0.000001, The luminance distinction factor. Raise this value to bring out the brighter elements in the scene.
-            screenMode: options.screenMode || true
-        }));
+                resolutionScale: options.resolutionScale || .1, // 0 - 1
+                kernelSize: options.kernelSize || 2, // 0 - 5, the lower the bigger the lines
+                intensity: options.intensity || 3, // min 0
+                distinction: options.distinction || 1, // min 0.000001, The luminance distinction factor. Raise this value to bring out the brighter elements in the scene.
+                screenMode: options.screenMode || true
+            }));
     },
 
     blur: () => {
@@ -70,14 +70,14 @@ PP._passes = {
             focus: (options != undefined && options.focus != undefined) ? options.focus : .5, // 0 - 1, 0 = close focus, 1 = far focus
             dof: (options != undefined && options.dof != undefined) ? options.dof : 0, // 0 - 1, 0 = out of focus is blurry, 1 = everything is sharp
             aperture: (options != undefined && options.aperture != undefined) ? options.aperture : .05, // 0 - 0.05, amplifie la dof (depth of field)
-            maxBlur: (options != undefined && options.maxBlur != undefined) ? options.maxBlur :   .1
+            maxBlur: (options != undefined && options.maxBlur != undefined) ? options.maxBlur : .1
         }));
     },
-    
+
     pixelation: (granularity) => {
         return new EffectPass(PP.camera, new PixelationEffect(granularity));
     },
-    
+
     /*
     glitch: (noiseMapSize) => {
         return new GlitchPass({
@@ -116,15 +116,28 @@ PP._passes = {
             params.epicenter
         );
     },
+    */
+
+    bloom: (options) => {
+        var options = options == undefined ? {} : options;
+        return new EffectPass(
+            PP.camera,
+            new BloomEffect({
+                resolutionScale: options.resolutionScale || .1, // 0 - 1
+                kernelSize: options.kernelSize || 2, // 0 - 5, the lower the bigger the lines
+                intensity: options.intensity || 3, // min 0
+                distinction: options.distinction || 1, // min 0.000001, The luminance distinction factor. Raise this value to bring out the brighter elements in the scene.
+                screenMode: options.screenMode || true
+            }));
+    },
 
     smaa: (params) => {
-        return new SMAAPass(
-            params.imgSearch,
-            params.imgArea
-        );
+        return new EffectPass(
+            PP.camera,
+            new SMAAEffect(
+                params.imgSearch,
+                params.imgArea));
     }
-    
-    */    
 }
 
 export default PP;

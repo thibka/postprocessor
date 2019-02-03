@@ -52,3 +52,44 @@ PostProcessor.remove('bokeh');
 // Default parameters will be used if none is provided
 PostProcessor.add('pixelation');
 ```
+
+## SMAA Antialiasing
+
+The SMAA Effect needs these [two images](smaa.zip) to work.
+
+### Simple call
+```javascript
+// First you must load the two "search" and "area" png images. Then use them this way:
+PostProcessor.add('smaa', {
+    imgSearch: smaaSearchImage,
+    imgArea: smaaAreaImage
+});
+```
+
+### Using [@thibka/multiloader](https://www.npmjs.com/package/@thibka/multiloader)
+You can also use the multiloader to easily load the two images before using them.
+```javascript
+MultiLoader.load({
+    files: {
+        // ...
+        smaaSearch: { 
+            type: 'image', 
+            path: require('./img/smaa/smaa-search.png')
+        },
+        smaaArea: { 
+            type: 'image',
+            path: require('./img/smaa/smaa-area.png')
+        }
+    },
+    onFinish: init
+});
+
+// ...
+
+function init() {
+    PostProcessor.add('smaa', {
+        imgSearch: MultiLoader.files.smaaSearch.image,
+        imgArea: MultiLoader.files.smaaArea.image
+    });
+}
+```
