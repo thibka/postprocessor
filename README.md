@@ -59,6 +59,12 @@ PostProcessor.add('glitch', 1); // 1 is the default noiseMapSize parameter
 PostProcessor.remove('glitch');
 ```
 
+## Scanlines
+```javascript 
+PostProcessor.add('film');
+PostProcessor.remove('film');
+```
+
 ## SMAA Antialiasing
 
 The SMAA Effect needs these [two images](smaa.zip) to work.

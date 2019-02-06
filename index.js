@@ -1,5 +1,6 @@
 import { WebGLRenderer } from 'three';
-import { BlurPass, BloomEffect, BokehEffect, GlitchEffect, PixelationEffect, EffectComposer, EffectPass, RenderPass, SMAAEffect } from "postprocessing";
+import { BlurPass, BloomEffect, BokehEffect, GlitchEffect, PixelationEffect, ScanlineEffect, SMAAEffect,
+         EffectComposer, EffectPass, RenderPass } from "postprocessing";
 
 var PP = {
     renderedPasses: {},
@@ -83,16 +84,17 @@ PP._passes = {
             dtSize: noiseMapSize != undefined ? noiseMapSize : 1
         }));
     },
-    /*
+    
     film: () => {
-        return new EffectPass(PP.camera, new FilmEffect({
+        return new EffectPass(PP.camera, new ScanlineEffect({
             noiseIntensity: 1, // 0 - 1
             scanlineDensity: 1, // 0 - 2, the lower the bigger the lines
             gridLineWidth: 1, // min 0
             gridScale: .01 // min 0.000001
-        });
+        }));
     }, 
 
+    /*
     godrays: (params) => { // scene, camera, lightSource, options
         return new GodRaysPass(
             params.scene, 
