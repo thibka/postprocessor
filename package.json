@@ -1,6 +1,6 @@
 {
   "name": "@thibka/postprocessor",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Makes Three.js postprocessing management easier.",
   "main": "index.js",
   "scripts": {
