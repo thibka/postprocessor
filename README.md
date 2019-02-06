@@ -53,6 +53,12 @@ PostProcessor.remove('bokeh');
 PostProcessor.add('pixelation');
 ```
 
+## Glitch
+```javascript 
+PostProcessor.add('glitch', 1); // 1 is the default noiseMapSize parameter
+PostProcessor.remove('glitch');
+```
+
 ## SMAA Antialiasing
 
 The SMAA Effect needs these [two images](smaa.zip) to work.

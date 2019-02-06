@@ -1,5 +1,5 @@
 import { WebGLRenderer } from 'three';
-import { BlurPass, BloomEffect, BokehEffect, PixelationEffect, EffectComposer, EffectPass, RenderPass, SMAAEffect } from "postprocessing";
+import { BlurPass, BloomEffect, BokehEffect, GlitchEffect, PixelationEffect, EffectComposer, EffectPass, RenderPass, SMAAEffect } from "postprocessing";
 
 var PP = {
     renderedPasses: {},
@@ -78,13 +78,12 @@ PP._passes = {
         return new EffectPass(PP.camera, new PixelationEffect(granularity));
     },
 
-    /*
     glitch: (noiseMapSize) => {
-        return new GlitchPass({
-            dtSize: noiseMapSize
-        });
+        return new EffectPass(PP.camera, new GlitchEffect({
+            dtSize: noiseMapSize != undefined ? noiseMapSize : 1
+        }));
     },
-    
+    /*
     film: () => {
         return new EffectPass(PP.camera, new FilmEffect({
             noiseIntensity: 1, // 0 - 1
